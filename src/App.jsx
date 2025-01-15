@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import TaskForm from "./components/taskForm.jsx";
+import TaskColumn from "./components/TaskColumn.jsx";
+import ToDoIcon from "./assets/hit.png";
+import DoingIcon from "./assets/star.png";
+import DoneIcon from "./assets/check.png";
 
-function App() {
-  const [count, setCount] = useState(0)
+const oldTasks = localStorage.getItem("tasks");
+console.log(oldTasks);
 
+const App = () => {
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    localStorage.getItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  const handleDelete = (taskIndex) => {
+    const newTasks = tasks.filter((task, index) => index !== taskIndex);
+    setTasks(newTasks);
+  };
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="app">
+      <TaskForm setTasks={setTasks} />
+      <main className="app_main">
+        <TaskColumn
+          title="ToDo" 
+          icon={ToDoIcon}
+          tasks={tasks}
+          status="todo"
+          handleDelete={handleDelete}
+        />
+        <TaskColumn
+          title="Doing"
+          icon={DoingIcon}
+          tasks={tasks}
+          status="doing"
+          handleDelete={handleDelete}
+        />
+        <TaskColumn
+          title="Done"
+          icon={DoneIcon}
+          tasks={tasks}
+          status="done"
+          handleDelete={handleDelete}
+        />
+      </main>
+    </div>
+  );
+};
 
-export default App
+export default App;
